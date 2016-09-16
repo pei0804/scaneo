@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/variadico/vbs"
 )
 
 const (
@@ -38,6 +40,9 @@ OPTIONS
 
     -v, -version
         Print version and exit.
+
+    -verbose
+        Enable verbose mode.
 
     -h, -help
         Print help and exit.
@@ -91,6 +96,7 @@ func main() {
 	flag.BoolVar(unexport, "unexport", false, "")
 	flag.StringVar(whitelist, "whitelist", "", "")
 	flag.BoolVar(version, "version", false, "")
+	flag.BoolVar(&vbs.Verbose, "verbose", false, "")
 	flag.BoolVar(help, "help", false, "")
 	flag.Usage = func() { log.Println(usageText) } // call on flag error
 	flag.Parse()
@@ -110,31 +116,34 @@ func main() {
 	if *packName == "current directory" {
 		wd, err := os.Getwd()
 		if err != nil {
-			log.Fatal("couldn't get working directory:", err)
+			log.Fatalln("couldn't get working directory:", err)
 		}
 
 		*packName = filepath.Base(wd)
 	}
+	vbs.Println("package name:", *packName)
 
 	files, err := findFiles(flag.Args())
 	if err != nil {
 		log.Println("couldn't find files:", err)
-		log.Fatal(usageText)
+		log.Fatalln(usageText)
 	}
+	vbs.Println("Found files:", files)
 
 	structToks := make([]structToken, 0, 8)
 	for _, file := range files {
 		toks, err := parseCode(file, *whitelist)
 		if err != nil {
 			log.Println(`"syntax error" - parser probably`)
-			log.Fatal(err)
+			log.Fatalln(err)
 		}
 
 		structToks = append(structToks, toks...)
 	}
+	vbs.Println("Found struct tokens:", structToks)
 
 	if err := genFile(*outFilename, *packName, *unexport, structToks); err != nil {
-		log.Fatal("couldn't generate file:", err)
+		log.Fatalln("couldn't generate file:", err)
 	}
 }
 

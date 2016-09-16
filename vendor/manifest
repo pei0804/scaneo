@@ -1,0 +1,13 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/variadico/vbs",
+			"repository": "https://github.com/variadico/vbs",
+			"vcs": "git",
+			"revision": "01694b75308a78976ba0885432beff8b8f88e71d",
+			"branch": "master",
+			"notests": true
+		}
+	]
+}
