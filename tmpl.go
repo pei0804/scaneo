@@ -17,7 +17,7 @@ import "database/sql"
 	return s, nil
 }
 
-func {{$.Visibility}}can{{title .Name}}s(rs *sql.Rows) ([]{{.Name}}, error) {
+func {{$.Visibility}}can{{pluralForm .Name}}(rs *sql.Rows) ([]{{.Name}}, error) {
 	structs := make([]{{.Name}}, 0, 16)
 	var err error
 	for rs.Next() {

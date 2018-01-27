@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/jinzhu/inflection"
 )
 
 const (
@@ -367,8 +369,13 @@ func genFile(outFile, pkg string, unexport bool, toks []structToken) error {
 		data.Visibility = "s"
 	}
 
+	var convertPluralForm = func(val string) string {
+		return inflection.Plural(strings.Title(val))
+	}
+
 	fnMap := template.FuncMap{"title": strings.Title}
-	scansTmpl, err := template.New("scans").Funcs(fnMap).Parse(scansText)
+	fnMap2 := template.FuncMap{"pluralForm": convertPluralForm}
+	scansTmpl, err := template.New("scans").Funcs(fnMap).Funcs(fnMap2).Parse(scansText)
 	if err != nil {
 		return err
 	}
